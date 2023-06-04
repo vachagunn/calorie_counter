@@ -12,12 +12,14 @@ const clearFieldsButton = document.querySelector('.form__reset-button');
 const counterResult = document.querySelector('.counter__result');
 
 const caloriesNorm = document.querySelector('#calories-norm');
+const caloriesMinimal = document.querySelector('#calories-minimal');
+const caloriesMaximal = document.querySelector('#calories-maximal');
 
 const MINIMUM_COEFFICIENT = 1.2;
 const LOW_COEFFICIENT = 1.375;
 const MEDIUM_COEFFICIENT = 1.55;
 const HIGH_COEFFICIENT = 1.725;
-const MAXIMUM_COEFFICIENT = 1.9;
+const VERY_HIGH_COEFFICIENT = 1.9;
 
 const checkValue = () => {
     if (age.value && height.value && weight.value) {
@@ -30,30 +32,29 @@ const checkValue = () => {
 const checkActivity = (activity) => {
     let coefficient;
 
-    if (activity.id = 'activity-minimal') {
+    if (activity.id === 'activity-minimal') {
         coefficient = MINIMUM_COEFFICIENT; 
-    } else if (activity.id = 'activity-low') {
+    } else if (activity.id === 'activity-low') {
         coefficient = LOW_COEFFICIENT;
-    } else if (activity.id = 'activity-medium') {
+    } else if (activity.id === 'activity-medium') {
         coefficient = MEDIUM_COEFFICIENT;
-    } else if (activity.id = 'activity-high') {
+    } else if (activity.id === 'activity-high') {
         coefficient = HIGH_COEFFICIENT;
-    } else if (activity.id = 'activity-maximal') {
+    } else if (activity.id === 'activity-maximal') {
         coefficient = VERY_HIGH_COEFFICIENT;
     }
     return coefficient;
 }
 
 const calculateCallories = () => {
-    let currentActivity;
     let currentCoefficient;
-    let formula = (10 * weight.value) + (6.25 * height.value) - (5 * age.value);
     let weightMaintenance;
 
-    activityInputs.forEach((activityInput) => {
-        if (activityInput.checked) {
-            currentActivity = activityInput;
-            currentCoefficient = checkActivity(currentActivity);
+    const formula = (10 * weight.value) + (6.25 * height.value) - (5 * age.value);
+
+    activityInputs.forEach((activity) => {
+        if (activity.checked) {
+            currentCoefficient = checkActivity(activity);
         }
     });
 
@@ -64,6 +65,8 @@ const calculateCallories = () => {
     }
 
     caloriesNorm.textContent = Math.round(weightMaintenance * currentCoefficient);
+    caloriesMinimal.textContent = Math.round(0.85 * caloriesNorm.textContent);
+    caloriesMaximal.textContent = Math.round(1.15 * caloriesNorm.textContent);
 }
 
 age.addEventListener('input', checkValue);
@@ -77,5 +80,8 @@ submitButton.addEventListener('click', (evt) => {
 });
 
 clearFieldsButton.addEventListener('click', () => {
+    caloriesNorm.textContent = 0;
+    caloriesMinimal.textContent = 0;
+    caloriesMaximal.textContent = 0;
     counterResult.classList.add('counter__result--hidden');
 });
